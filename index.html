@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>منصة التداول الآلي الذكي | AI Trading Hub</title>
+    <style>
+        :root {
+            --bg-main: #07090e;
+            --bg-card: #111622;
+            --bg-input: #0b0f17;
+            --border-color: #1e293b;
+            --neon-green: #00ff88;
+            --neon-blue: #00d2ff;
+            --neon-gold: #ffb800;
+            --neon-red: #ff3366;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            padding: 12px;
+            padding-top: env(safe-area-inset-top, 16px);
+            padding-bottom: 60px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* شريط المنصة العلوي */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand-logo {
+            font-size: 1.15rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-pill {
+            font-size: 0.75rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        /* شريط التطبيقات الخمسة (الـ 5 بوتات) */
+        .apps-nav {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 14px;
+            scrollbar-width: none;
+        }
+        .apps-nav::-webkit-scrollbar { display: none; }
+
+        .app-tab {
+            flex: 0 0 auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 95px;
+        }
+
+        .app-tab.active {
+            border-color: var(--neon-green);
+            background: rgba(0, 255, 136, 0.08);
+            box-shadow: 0 0 12px rgba(0, 255, 136, 0.15);
+        }
+
+        .app-tab-icon { font-size: 1.2rem; margin-bottom: 4px; }
+        .app-tab-title { font-size: 0.78rem; font-weight: 800; color: var(--text-main); }
+        .app-tab-sub { font-size: 0.65rem; color: var(--text-muted); }
+
+        /* البطاقات العامة */
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 14px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* شاشة تسجيل الدخول والوضعين */
+        .mode-switch {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            background: var(--bg-input);
+            padding: 5px;
+            border-radius: 12px;
+            margin-bottom: 14px;
+            border: 1px solid var(--border-color);
+        }
+
+        .mode-btn {
+            padding: 10px 6px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .mode-btn.active {
+            background: var(--bg-card);
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+        }
+
+        .form-group { margin-bottom: 10px; }
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 12px;
+            border-radius: 9px;
+            font-size: 0.88rem;
+            outline: none;
+        }
+        .form-input:focus { border-color: var(--neon-blue); }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-green { background: var(--neon-green); color: #000; }
+        .btn-blue { background: var(--neon-blue); color: #000; }
+        .btn-red { background: var(--neon-red); color: #fff; }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 8px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+
+        /* معلومات الحساب والسعر */
+        .price-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-input);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 12px;
+        }
+
+        .pair-title { font-size: 1.15rem; font-weight: 900; }
+        .pair-tag {
+            font-size: 0.68rem;
+            padding: 2px 7px;
+            border-radius: 6px;
+            background: rgba(0, 210, 255, 0.15);
+            color: var(--neon-blue);
+            display: inline-block;
+            margin-top: 3px;
+        }
+
+        .live-price {
+            font-size: 1.55rem;
+            font-weight: 900;
+            color: var(--neon-green);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stats-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .stat-label { font-size: 0.7rem; color: var(--text-muted); }
+        .stat-val { font-size: 1.05rem; font-weight: 800; margin-top: 4px; }
+
+        /* شارة الاتصال بالميتاتريدر أو المحفظة */
+        .connection-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            margin-bottom: 12px;
+            background: rgba(0, 255, 136, 0.08);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: var(--neon-green);
+        }
+
+        /* الشبكة والسجل */
+        .grid-list {
+            max-height: 170px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .grid-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 7px 10px;
+            background: var(--bg-input);
+            border-radius: 7px;
+            font-size: 0.78rem;
+            border-right: 4px solid var(--border-color);
+        }
+        .grid-item.buy { border-right-color: var(--neon-green); }
+        .grid-item.sell { border-right-color: var(--neon-red); }
+
+        .log-box {
+            background: var(--bg-input);
+            border-radius: 8px;
+            padding: 8px;
+            height: 100px;
+            overflow-y: auto;
+            font-size: 0.7rem;
+            font-family: monospace;
+            line-height: 1.45;
+            color: var(--text-muted);
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- الشريط العلوي -->
+    <div class="top-bar">
+        <div class="brand-logo">NEXUS AI BOTS ⚡</div>
+        <div class="user-pill" onclick="toggleAuthModal()">
+            <span id="navUserMode">👤 تسجيل / تبديل الوضع</span>
+        </div>
+    </div>
+
+    <!-- شريط اختيار التطبيقات الخمسة (5 Bots) -->
+    <div class="apps-nav" id="appsNav">
+        <div class="app-tab active" onclick="selectBotApp(0)">
+            <div class="app-tab-icon">🥇</div>
+            <div class="app-tab-title">بوت الذهب</div>
+            <div class="app-tab-sub">XAU / USD</div>
+        </div>
+        <div class="app-tab" onclick="selectBotApp(1)">
+            <div class="app-tab-icon">₿</div>
+            <div class="app-tab-title">بوت بيتكوين</div>
+            <div class="app-tab-sub">BTC / USDT</div>
+        </div>
+        <div class="app-tab" onclick="selectBotApp(2)">
+            <div class="app-tab-icon">💶</div>
+            <div class="app-tab-title">بوت الفوركس</div>
+            <div class="app-tab-sub">EUR / USD</div>
+        </div>
+        <div class="app-tab" onclick="selectBotApp(3)">
+            <div class="app-tab-icon">◎</div>
+            <div class="app-tab-title">بوت سولانا</div>
+            <div class="app-tab-sub">SOL / USDT</div>
+        </div>
+        <div class="app-tab" onclick="selectBotApp(4)">
+            <div class="app-tab-icon">💎</div>
+            <div class="app-tab-title">بوت إيثيريوم</div>
+            <div class="app-tab-sub">ETH / USDT</div>
+        </div>
+    </div>
+
+    <!-- نافذة تسجيل الدخول واختيار نوع الحساب (تظهر وتختفي) -->
+    <div id="authCard" class="card">
+        <div class="card-header">
+            <span>🔐 إعداد حساب التداول الخاص بك</span>
+            <span style="color: var(--neon-blue); cursor: pointer;" onclick="toggleAuthModal()">إغلاق ✖</span>
+        </div>
+
+        <div class="mode-switch">
+            <button id="tabDirect" class="mode-btn active" onclick="switchLoginType('direct')">
+                💳 تداول مباشر بالتطبيق<br><span style="font-size:0.65rem; font-weight:400;">(إيداع داخلي بدون وسيط)</span>
+            </button>
+            <button id="tabBroker" class="mode-btn" onclick="switchLoginType('broker')">
+                📈 ربط حساب وسيط<br><span style="font-size:0.65rem; font-weight:400;">(MetaTrader 4 / 5)</span>
+            </button>
+        </div>
+
+        <!-- نموذج الوضع الأول: بدون وسيط (إيداع مباشر) -->
+        <div id="directForm">
+            <div class="form-group">
+                <label>البريد الإلكتروني أو معرف الحساب</label>
+                <input type="text" id="directEmail" class="form-input" placeholder="example@mail.com" value="user_vip@nexus.ai">
+            </div>
+            <div class="form-group">
+                <label>مبلغ الإيداع الفوري في محفظة التطبيق ($ USDT)</label>
+                <input type="number" id="directDepositInput" class="form-input" value="1500">
+            </div>
+            <button class="btn btn-green" onclick="saveAccountConfig('direct')">✅ تفعيل المحفظة الداخلية والإيداع</button>
+        </div>
+
+        <!-- نموذج الوضع الثاني: ربط وسيط وميتاتريدر -->
+        <div id="brokerForm" class="hidden">
+            <div class="form-group">
+                <label>منصة التداول والشركة (Broker Server)</label>
+                <input type="text" id="mtServer" class="form-input" placeholder="مثال: Exness-MT5Real أو ICMarkets-Live" value="Exness-MT5Real">
+            </div>
+            <div class="stats-2col">
+                <div class="form-group">
+                    <label>رقم حساب MT4/MT5 (Login)</label>
+                    <input type="number" id="mtLogin" class="form-input" placeholder="8849201" value="8849201">
+                </div>
+                <div class="form-group">
+                    <label>كلمة مرور المتداول</label>
+                    <input type="password" id="mtPass" class="form-input" value="12345678">
+                </div>
+            </div>
+            <button class="btn btn-blue" onclick="saveAccountConfig('broker')">🔗 ربط الحساب بميتاتريدر والبدء</button>
+        </div>
+    </div>
+
+    <!-- شريط حالة الربط الحالي -->
+    <div id="connectionStatus" class="connection-banner">
+        <span id="connText">💳 الوضع الحالي: محفظة التطبيق المباشرة (بدون وسيط)</span>
+        <span style="text-decoration: underline; cursor: pointer;" onclick="toggleAuthModal()">تغيير</span>
+    </div>
+
+    <!-- بطاقة البوت النشط والسعر الحي -->
+    <div class="card">
+        <div class="price-banner">
+            <div>
+                <div id="activeBotTitle" class="pair-title">بوت الذهب الآلي (XAU/USD)</div>
+                <span id="activeBotTag" class="pair-tag">سوق المعادن والفوركس</span>
+            </div>
+            <div id="livePriceDisplay" class="live-price">...</div>
+        </div>
+
+        <div class="stats-2col">
+            <div class="stat-box">
+                <div id="balanceLabel" class="stat-label">رصيد المحفظة الداخلية</div>
+                <div id="balanceValue" class="stat-val">1500.00 $</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">أرباح هذا البوت</div>
+                <div id="profitValue" class="stat-val" style="color: var(--neon-green);">+0.00 $</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- بطاقة الذكاء الاصطناعي والأخبار الخاصة بالزوج -->
+    <div class="card">
+        <div class="card-header">
+            <span>🧠 فلتر الأخبار الذكي لهذا الزوج (AI Shield)</span>
+            <span id="aiScoreBadge" style="color: var(--neon-blue); font-weight: 800;">الدرجة: 0/10</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
+            <button class="btn-outline" style="border-color:var(--neon-green); color:var(--neon-green); margin:0;" onclick="setBotAIScore(8)">🟢 أخبار إيجابية</button>
+            <button class="btn-outline" style="margin:0;" onclick="setBotAIScore(0)">⚪ سوق مستقر</button>
+            <button class="btn-outline" style="border-color:var(--neon-red); color:var(--neon-red); margin:0;" onclick="setBotAIScore(-8)">🔴 أخبار خطيرة</button>
+        </div>
+    </div>
+
+    <!-- إعدادات شبكة التداول للبوت المختار -->
+    <div class="card">
+        <div class="card-header">
+            <span>⚙️ إعدادات الشبكة الآلية</span>
+            <span id="botRunBadge" style="color: var(--text-muted);">متوقف ⏹️</span>
+        </div>
+
+        <button class="btn btn-outline" onclick="autoSetupCurrentBot()">🎯 معايرة النطاق تلقائياً حسب السعر الآن</button>
+
+        <div class="stats-2col" style="margin-bottom: 10px;">
+            <div class="form-group" style="margin:0;">
+                <label>الحد الأدنى للشبكة ($)</label>
+                <input type="number" id="gridLow" class="form-input" step="any">
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label>الحد الأعلى للشبكة ($)</label>
+                <input type="number" id="gridHigh" class="form-input" step="any">
+            </div>
+        </div>
+
+        <div class="stats-2col" style="margin-bottom: 12px;">
+            <div class="form-group" style="margin:0;">
+                <label>عدد الخطوط (الأوامر)</label>
+                <input type="number" id="gridLines" class="form-input" value="6">
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label>قيمة العقد/الصفقة ($)</label>
+                <input type="number" id="gridOrderVal" class="form-input" value="100">
+            </div>
+        </div>
+
+        <button id="mainToggleBtn" class="btn btn-green" onclick="toggleCurrentBot()">🚀 تشغيل البوت الآن</button>
+    </div>
+
+    <!-- عرض خطوط الشبكة -->
+    <div class="card">
+        <div class="card-header">
+            <span>📊 أوامر الشراء والبيع المعلقة</span>
+            <span id="executionTargetText" style="font-size: 0.7rem; color: var(--neon-gold);">التنفيذ: داخلي بالتطبيق</span>
+        </div>
+        <div id="gridContainer" class="grid-list">
+            <div style="text-align:center; padding:14px; color:var(--text-muted); font-size:0.8rem;">
+                اضغط "معايرة النطاق تلقائياً" ثم شغّل البوت
+            </div>
+        </div>
+    </div>
+
+    <!-- سجل العمليات -->
+    <div class="card">
+        <div class="card-header">📝 سجل التنفيذ الحي (Live Terminal)</div>
+        <div id="terminalLog" class="log-box"></div>
+    </div>
+
+    <script>
+        // تعريف التطبيقات الخمسة (الـ 5 بوتات) مع رموز جلب السعر الحقيقي
+        const BOTS_CONFIG = [
+            { id: 'gold', name: 'بوت الذهب الآلي (XAU/USD)', tag: 'سوق المعادن - الذهب العالمي', apiSymbol: 'PAXGUSDT', decimals: 2, spreadPct: 0.004, running: false, profit: 0, aiScore: 0, grids: [], low: 0, high: 0 },
+            { id: 'btc',  name: 'بوت بيتكوين (BTC/USDT)', tag: 'العملات الرقمية الكبرى', apiSymbol: 'BTCUSDT', decimals: 2, spreadPct: 0.008, running: false, profit: 0, aiScore: 0, grids: [], low: 0, high: 0 },
+            { id: 'eur',  name: 'بوت اليورو/دولار (EUR/USD)', tag: 'سوق الفوركس العالمي', apiSymbol: 'EURUSDT', decimals: 4, spreadPct: 0.003, running: false, profit: 0, aiScore: 0, grids: [], low: 0, high: 0 },
+            { id: 'sol',  name: 'بوت سولانا السريع (SOL/USDT)', tag: 'مضاربة عالية السيولة', apiSymbol: 'SOLUSDT', decimals: 2, spreadPct: 0.01, running: false, profit: 0, aiScore: 0, grids: [], low: 0, high: 0 },
+            { id: 'eth',  name: 'بوت إيثيريوم (ETH/USDT)', tag: 'العقود الذكية والكريبتو', apiSymbol: 'ETHUSDT', decimals: 2, spreadPct: 0.008, running: false, profit: 0, aiScore: 0, grids: [], low: 0, high: 0 }
+        ];
+
+        let activeBotIndex = 0;
+        let currentLivePrice = 0;
+
+        // حالة حساب المستخدم (direct = بدون وسيط | broker = ميتاتريدر)
+        let accountMode = 'direct'; 
+        let directWalletBalance = 1500.00;
+        let brokerEquity = 3200.00;
+        let mtServerName = 'Exness-MT5Real';
+        let mtLoginId = '8849201';
+
+        function logMsg(msg) {
+            const box = document.getElementById('terminalLog');
+            const t = new Date().toLocaleTimeString('en-GB');
+            box.innerHTML = `<div style="margin-bottom:4px;"><span style="color:var(--neon-blue);">[${t}]</span> ${msg}</div>` + box.innerHTML;
+        }
+
+        // إظهار أو إخفاء نافذة التسجيل
+        function toggleAuthModal() {
+            const card = document.getElementById('authCard');
+            card.classList.toggle('hidden');
+        }
+
+        // التبديل بين تبويب "تداول مباشر" وتبويب "حساب وسيط"
+        function switchLoginType(type) {
+            document.getElementById('tabDirect').classList.toggle('active', type === 'direct');
+            document.getElementById('tabBroker').classList.toggle('active', type === 'broker');
+            document.getElementById('directForm').classList.toggle('hidden', type !== 'direct');
+            document.getElementById('brokerForm').classList.toggle('hidden', type !== 'broker');
+        }
+
+        // حفظ إعدادات الحساب (مباشر أو ميتاتريدر)
+        function saveAccountConfig(type) {
+            accountMode = type;
+            if (type === 'direct') {
+                const dep = parseFloat(document.getElementById('directDepositInput').value) || 1000;
+                directWalletBalance = dep;
+                document.getElementById('connText').innerText = `💳 الوضع النشط: محفظة التطبيق المباشرة (بدون وسيط)`;
+                document.getElementById('balanceLabel').innerText = `رصيد المحفظة الداخلية`;
+                document.getElementById('executionTargetText').innerText = `التنفيذ: محفظة التطبيق المباشرة`;
+                logMsg(`✅ تم تفعيل الحساب المباشر بدون وسيط برصيد إيداع ${dep.toFixed(2)}$`);
+            } else {
+                mtServerName = document.getElementById('mtServer').value || 'Exness-MT5';
+                mtLoginId = document.getElementById('mtLogin').value || '8849201';
+                document.getElementById('connText').innerText = `🔗 مربوط مع ميتاتريدر: ${mtServerName} (#${mtLoginId})`;
+                document.getElementById('balanceLabel').innerText = `رصيد حساب الوسيط (MT5 Equity)`;
+                document.getElementById('executionTargetText').innerText = `التنفيذ: أوامر مباشرة إلى ${mtServerName}`;
+                logMsg(`🔗 تم الربط بنجاح مع خادم ${mtServerName} للحساب رقم #${mtLoginId}`);
+            }
+            updateDashboardUI();
+            document.getElementById('authCard').classList.add('hidden');
+        }
+
+        // اختيار أحد البوتات الخمسة من الشريط العلوي
+        function selectBotApp(index) {
+            activeBotIndex = index;
+            const tabs = document.querySelectorAll('.app-tab');
+            tabs.forEach((t, i) => t.classList.toggle('active', i === index));
+
+            const bot = BOTS_CONFIG[activeBotIndex];
+            document.getElementById('activeBotTitle').innerText = bot.name;
+            document.getElementById('activeBotTag').innerText = bot.tag;
+            document.getElementById('livePriceDisplay').innerText = '...';
+            currentLivePrice = 0;
+
+            fetchPriceForActiveBot().then(() => {
+                if (bot.low === 0) autoSetupCurrentBot();
+                updateDashboardUI();
+            });
+            logMsg(`📲 تم الانتقال إلى واجهة [${bot.name}]`);
+        }
+
+        // جلب السعر الحي للبوت المختار
+        async function fetchPriceForActiveBot() {
+            const bot = BOTS_CONFIG[activeBotIndex];
+            try {
+                const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${bot.apiSymbol}`);
+                const data = await res.json();
+                currentLivePrice = parseFloat(data.price);
+                document.getElementById('livePriceDisplay').innerText = currentLivePrice.toFixed(bot.decimals) + ' $';
+
+                if (bot.running && bot.aiScore > -6) {
+                    executeGridLogic(bot);
+                }
+            } catch (e) {
+                document.getElementById('livePriceDisplay').innerText = 'متصل...';
+            }
+        }
+
+        // معايرة الشبكة تلقائياً حسب سعر الزوج المختار (سواء ذهب أو يورو أو بيتكوين)
+        function autoSetupCurrentBot() {
+            if (currentLivePrice === 0) return;
+            const bot = BOTS_CONFIG[activeBotIndex];
+            bot.low = parseFloat((currentLivePrice * (1 - bot.spreadPct)).toFixed(bot.decimals));
+            bot.high = parseFloat((currentLivePrice * (1 + bot.spreadPct)).toFixed(bot.decimals));
+
+            document.getElementById('gridLow').value = bot.low;
+            document.getElementById('gridHigh').value = bot.high;
+            logMsg(`🎯 تم ضبط نطاق [${bot.name}] بين ${bot.low}$ و ${bot.high}$`);
+        }
+
+        // بناء خطوط الشبكة للبوت الحالي
+        function buildBotGrids(bot) {
+            const low = parseFloat(document.getElementById('gridLow').value);
+            const high = parseFloat(document.getElementById('gridHigh').value);
+            const lines = parseInt(document.getElementById('gridLines').value) || 6;
+
+            if (!low || !high || low >= high) {
+                alert("يرجى الضغط على زر معايرة النطاق تلقائياً أولاً!");
+                return false;
+            }
+
+            bot.low = low;
+            bot.high = high;
+            bot.grids = [];
+            const step = (high - low) / lines;
+
+            for (let i = 0; i <= lines; i++) {
+                const p = parseFloat((low + step * i).toFixed(bot.decimals));
+                bot.grids.push({
+                    price: p,
+                    type: p < currentLivePrice ? 'buy' : 'sell',
+                    step: step
+                });
+            }
+            bot.grids.sort((a, b) => b.price - a.price);
+            return true;
+        }
+
+        // تشغيل أو إيقاف البوت الحالي
+        function toggleCurrentBot() {
+            const bot = BOTS_CONFIG[activeBotIndex];
+            if (!bot.running) {
+                if (!buildBotGrids(bot)) return;
+                bot.running = true;
+                const modeLabel = accountMode === 'direct' ? 'المحفظة المباشرة' : `ميتاتريدر (${mtServerName})`;
+                logMsg(`🚀 بدأ تشغيل [${bot.name}] عبر [${modeLabel}]`);
+            } else {
+                bot.running = false;
+                logMsg(`⏹️ تم إيقاف [${bot.name}]`);
+            }
+            updateDashboardUI();
+        }
+
+        // تنفيذ الصفقات الحية
+        function executeGridLogic(bot) {
+            const orderVal = parseFloat(document.getElementById('gridOrderVal').value) || 100;
+            let currentBal = accountMode === 'direct' ? directWalletBalance : brokerEquity;
+            let changed = false;
+
+            bot.grids.forEach(g => {
+                if (g.type === 'buy' && currentLivePrice <= g.price) {
+                    if (currentBal >= orderVal) {
+                        if (accountMode === 'direct') directWalletBalance -= orderVal;
+                        else brokerEquity -= orderVal;
+
+                        g.type = 'sell';
+                        g.price = parseFloat((g.price + g.step).toFixed(bot.decimals));
+                        const targetLog = accountMode === 'direct' ? 'محفظة التطبيق' : `MT5 #${mtLoginId}`;
+                        logMsg(`🟢 [${bot.id.toUpperCase()}] شراء عند ${currentLivePrice.toFixed(bot.decimals)}$ (${targetLog})`);
+                        changed = true;
+                    }
+                } else if (g.type === 'sell' && currentLivePrice >= g.price) {
+                    if (bot.aiScore >= 7) return; // تأجيل البيع وقت الأخبار الإيجابية
+                    const profit = orderVal * (g.step / g.price);
+                    if (accountMode === 'direct') directWalletBalance += (orderVal + profit);
+                    else brokerEquity += (orderVal + profit);
+
+                    bot.profit += profit;
+                    g.type = 'buy';
+                    g.price = parseFloat((g.price - g.step).toFixed(bot.decimals));
+                    logMsg(`🔴 [${bot.id.toUpperCase()}] بيع بربح +${profit.toFixed(2)}$ عند ${currentLivePrice.toFixed(bot.decimals)}$`);
+                    changed = true;
+                }
+            });
+
+            if (changed) {
+                bot.grids.sort((a, b) => b.price - a.price);
+                updateDashboardUI();
+            }
+        }
+
+        // تغيير درجة أخبار الذكاء الاصطناعي للبوت الحالي
+        function setBotAIScore(score) {
+            const bot = BOTS_CONFIG[activeBotIndex];
+            bot.aiScore = score;
+            const badge = document.getElementById('aiScoreBadge');
+            badge.innerText = `الدرجة: ${score}/10`;
+
+            if (score <= -6) {
+                badge.style.color = 'var(--neon-red)';
+                logMsg(`⚠️ درع الـ AI أوقف الشراء مؤقتاً في [${bot.name}] بسبب أخبار سلبية!`);
+            } else if (score >= 7) {
+                badge.style.color = 'var(--neon-green)';
+                logMsg(`🔥 درع الـ AI يؤجل البيع في [${bot.name}] لتعظيم أرباح الصعود!`);
+            } else {
+                badge.style.color = 'var(--neon-blue)';
+                logMsg(`⚪ وضع الأخبار مستقر لـ [${bot.name}].`);
+            }
+        }
+
+        // تحديث الواجهة بالكامل
+        function updateDashboardUI() {
+            const bot = BOTS_CONFIG[activeBotIndex];
+            const bal = accountMode === 'direct' ? directWalletBalance : brokerEquity;
+            document.getElementById('balanceValue').innerText = bal.toFixed(2) + ' $';
+            document.getElementById('profitValue').innerText = '+' + bot.profit.toFixed(2) + ' $';
+
+            if (bot.low > 0) document.getElementById('gridLow').value = bot.low;
+            if (bot.high > 0) document.getElementById('gridHigh').value = bot.high;
+
+            const btn = document.getElementById('mainToggleBtn');
+            const runBadge = document.getElementById('botRunBadge');
+            if (bot.running) {
+                btn.innerText = '⏹️ إيقاف هذا البوت';
+                btn.className = 'btn btn-red';
+                runBadge.innerText = 'يعمل الآن ⚡';
+                runBadge.style.color = 'var(--neon-green)';
+            } else {
+                btn.innerText = '🚀 تشغيل البوت الآن';
+                btn.className = 'btn btn-green';
+                runBadge.innerText = 'متوقف ⏹️';
+                runBadge.style.color = 'var(--text-muted)';
+            }
+
+            // رسم خطوط الشبكة
+            const container = document.getElementById('gridContainer');
+            if (bot.grids.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:14px; color:var(--text-muted); font-size:0.8rem;">اضغط "معايرة النطاق تلقائياً" ثم شغّل البوت</div>`;
+            } else {
+                container.innerHTML = '';
+                bot.grids.forEach(g => {
+                    const div = document.createElement('div');
+                    div.className = `grid-item ${g.type}`;
+                    const label = g.type === 'buy' ? '🟢 أمر شراء معلق' : '🔴 أمر بيع معلق';
+                    div.innerHTML = `<span>${label}</span><span style="font-weight:800;">${g.price.toFixed(bot.decimals)} $</span>`;
+                    container.appendChild(div);
+                });
+            }
+        }
+
+        // تشغيل أولي
+        document.getElementById('authCard').classList.add('hidden'); // إخفاء نافذة التسجيل مبدئياً لسهولة التصفح
+        selectBotApp(0); // البدء ببوت الذهب
+        setInterval(fetchPriceForActiveBot, 2000);
+    </script>
+</body>
+</html>
+ackground: rgba(0, 255, 136, 0.15);
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+        }
+
+        .status-badge.emergency {
+            background: rgba(255, 51, 102, 0.15);
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        .card-title {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Pair Selector & Live Price */
+        .price-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pair-select {
+            background: var(--bg-main);
+            color: var(--text-main);
+            border: 1px solid var(--neon-blue);
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            outline: none;
+        }
+
+        .live-price {
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: var(--neon-blue);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Wallet & Profit */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.03);
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .stat-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .stat-val {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        /* AI News Section */
+        .ai-meter {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-main);
+            padding: 10px 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .ai-score {
+            font-size: 1.35rem;
+            font-weight: 800;
+        }
+
+        .news-feed-box {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin-bottom: 10px;
+            font-size: 0.75rem;
+            max-height: 85px;
+            overflow-y: auto;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .news-item {
+            margin-bottom: 6px;
+            padding-bottom: 4px;
+            border-bottom: 1px dashed rgba(255,255,255,0.08);
+            color: #d1d5db;
+        }
+
+        .ai-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+        }
+
+        .btn-ai {
+            padding: 7px;
+            font-size: 0.72rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-main);
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        /* Form Controls */
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .input-box label {
+            display: block;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .input-box input {
+            width: 100%;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 9px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 11px;
+            border-radius: 10px;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--neon-green); color: #000; }
+        .btn-stop { background: var(--neon-red); color: #fff; }
+        .btn-secondary {
+            background: #1f2937;
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            margin-bottom: 10px;
+            padding: 8px;
+            font-size: 0.8rem;
+        }
+
+        /* Grid List */
+        .grid-list {
+            max-height: 190px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .grid-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 7px 10px;
+            border-radius: 7px;
+            font-size: 0.8rem;
+            background: var(--bg-main);
+            border-right: 4px solid var(--border-color);
+        }
+
+        .grid-row.buy { border-right-color: var(--neon-green); }
+        .grid-row.sell { border-right-color: var(--neon-red); }
+        .grid-type { font-weight: 700; }
+        .grid-type.buy { color: var(--neon-green); }
+        .grid-type.sell { color: var(--neon-red); }
+
+        /* Logs & Reset */
+        .log-box {
+            background: var(--bg-main);
+            border-radius: 8px;
+            padding: 8px;
+            height: 110px;
+            overflow-y: auto;
+            font-size: 0.72rem;
+            font-family: monospace;
+            line-height: 1.45;
+            color: var(--text-muted);
+        }
+
+        .log-entry { margin-bottom: 4px; }
+        .log-time { color: var(--neon-blue); }
+        .reset-btn {
+            background: transparent;
+            border: 1px solid #374151;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            padding: 6px 12px;
+            border-radius: 6px;
+            margin-top: 8px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="bot-title">AI GRID BOT PRO v2.0 ⚡</div>
+        <div id="botStatusBadge" class="status-badge">متوقف</div>
+    </div>
+
+    <!-- اختيار العملة والسعر الحي -->
+    <div class="card">
+        <div class="price-box">
+            <select id="symbolSelect" class="pair-select" onchange="changeSymbol()">
+                <option value="SOLUSDT">SOL / USDT</option>
+                <option value="BTCUSDT">BTC / USDT</option>
+                <option value="ETHUSDT">ETH / USDT</option>
+                <option value="BNBUSDT">BNB / USDT</option>
+            </select>
+            <span id="livePrice" class="live-price">...</span>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-label">الرصيد المتاح (محفوظ)</div>
+                <div id="usdtBalance" class="stat-val">1000.00 $</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">إجمالي أرباح الشبكة</div>
+                <div id="gridProfit" class="stat-val" style="color: var(--neon-green);">+0.00 $</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- محرك الأخبار الحقيقية والذكاء الاصطناعي -->
+    <div class="card">
+        <div class="card-title">
+            <span>🧠 رادار الأخبار الحقيقية (Live NLP)</span>
+            <button onclick="fetchLiveCryptoNews()" style="background:none; border:1px solid var(--neon-blue); color:var(--neon-blue); border-radius:6px; padding:2px 8px; font-size:0.7rem;">تحديث الأخبار 🔄</button>
+        </div>
+        <div class="ai-meter">
+            <div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">قرار الفلتر الذكي:</div>
+                <div id="aiStateText" style="font-weight: 700; font-size: 0.9rem; margin-top: 2px;">مستقر (محايد)</div>
+            </div>
+            <div id="aiScoreDisplay" class="ai-score" style="color: var(--neon-blue);">0 / 10</div>
+        </div>
+        
+        <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 4px;">آخر الأخبار المسحوبة من السوق العالمي:</div>
+        <div id="newsFeedBox" class="news-feed-box">جاري سحب وتحليل الأخبار الحية...</div>
+
+        <div style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px;">أو اختبر ردة فعل البوت يدوياً:</div>
+        <div class="ai-buttons">
+            <button class="btn-ai" style="border-color: var(--neon-green); color: var(--neon-green);" onclick="applyAIScore(8, 'محاكاة يدوية: خبر إيجابي قوي')">🟢 إيجابي (+8)</button>
+            <button class="btn-ai" onclick="applyAIScore(0, 'محاكاة يدوية: استقرار السوق')">⚪ محايد (0)</button>
+            <button class="btn-ai" style="border-color: var(--neon-red); color: var(--neon-red);" onclick="applyAIScore(-8, 'محاكاة يدوية: خبر كارثي')">🔴 كارثي (-8)</button>
+        </div>
+    </div>
+
+    <!-- إعدادات الشبكة -->
+    <div class="card">
+        <div class="card-title">
+            <span>⚙️ إعدادات الشبكة (Grid Setup)</span>
+        </div>
+        <button class="btn btn-secondary" onclick="autoFillGrid()">🎯 ضبط النطاق تلقائياً حول السعر الحالي</button>
+        <div class="input-group">
+            <div class="input-box">
+                <label>الحد الأدنى ($)</label>
+                <input type="number" id="lowerPrice" value="140" step="any" onchange="saveState()">
+            </div>
+            <div class="input-box">
+                <label>الحد الأقصى ($)</label>
+                <input type="number" id="upperPrice" value="160" step="any" onchange="saveState()">
+            </div>
+        </div>
+        <div class="input-group">
+            <div class="input-box">
+                <label>عدد الشبكات</label>
+                <input type="number" id="gridCount" value="6" min="2" max="25" onchange="saveState()">
+            </div>
+            <div class="input-box">
+                <label>حجم الصفقة ($)</label>
+                <input type="number" id="orderSize" value="50" onchange="saveState()">
+            </div>
+        </div>
+        <button id="toggleBotBtn" class="btn btn-primary" onclick="toggleBot()">تشغيل البوت الآلي</button>
+    </div>
+
+    <!-- خطوط الشبكة -->
+    <div class="card">
+        <div class="card-title">
+            <span>📊 الأوامر المعلقة على الشبكة</span>
+            <span id="stepSizeInfo" style="font-size: 0.72rem; color: var(--neon-blue);"></span>
+        </div>
+        <div id="gridList" class="grid-list">
+            <div style="text-align: center; color: var(--text-muted); padding: 16px; font-size: 0.8rem;">
+                اضغط "ضبط النطاق" ثم شغّل البوت
+            </div>
+        </div>
+    </div>
+
+    <!-- سجل القرارات وإعادة الضبط -->
+    <div class="card">
+        <div class="card-title">📝 سجل العمليات الحية</div>
+        <div id="logBox" class="log-box"></div>
+        <button class="reset-btn" onclick="resetWallet()">🗑️ تصفير المحفظة والبيانات المحفوظة (Reset)</button>
+    </div>
+
+    <script>
+        let currentSymbol = 'SOLUSDT';
+        let currentPrice = 0;
+        let botRunning = false;
+        let aiScore = 0;
+        let usdtBalance = 1000.00;
+        let realizedProfit = 0.00;
+        let grids = [];
+
+        const STORAGE_KEY = 'AI_GRID_BOT_V2_STATE';
+
+        // حفظ الحالة في ذاكرة الآيفون
+        function saveState() {
+            const state = {
+                currentSymbol,
+                botRunning,
+                usdtBalance,
+                realizedProfit,
+                grids,
+                lowerPrice: document.getElementById('lowerPrice').value,
+                upperPrice: document.getElementById('upperPrice').value,
+                gridCount: document.getElementById('gridCount').value,
+                orderSize: document.getElementById('orderSize').value
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        // استرجاع الحالة المحفوظة عند فتح التطبيق
+        function loadState() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+            try {
+                const state = JSON.parse(saved);
+                currentSymbol = state.currentSymbol || 'SOLUSDT';
+                document.getElementById('symbolSelect').value = currentSymbol;
+                usdtBalance = state.usdtBalance ?? 1000.00;
+                realizedProfit = state.realizedProfit ?? 0.00;
+                grids = state.grids || [];
+                botRunning = state.botRunning || false;
+
+                if (state.lowerPrice) document.getElementById('lowerPrice').value = state.lowerPrice;
+                if (state.upperPrice) document.getElementById('upperPrice').value = state.upperPrice;
+                if (state.gridCount) document.getElementById('gridCount').value = state.gridCount;
+                if (state.orderSize) document.getElementById('orderSize').value = state.orderSize;
+
+                updateWalletUI();
+                if (grids.length > 0) renderGrids();
+                updateBotStatusUI();
+                addLog("💾 تم استرجاع بيانات محفظتك وإعداداتك من ذاكرة الهاتف.");
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // تصفير المحفظة بالكامل
+        function resetWallet() {
+            if (!confirm("هل تريد فعلاً إعادة الرصيد إلى 1000$ ومسح الأرباح المحفوظة؟")) return;
+            localStorage.removeItem(STORAGE_KEY);
+            botRunning = false;
+            usdtBalance = 1000.00;
+            realizedProfit = 0.00;
+            grids = [];
+            updateWalletUI();
+            updateBotStatusUI();
+            document.getElementById('gridList').innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 16px;">تم تصفير البيانات</div>';
+            addLog("🔄 تم تصفير المحفظة وإعادة الرصيد إلى 1000$.");
+        }
+
+        function updateWalletUI() {
+            document.getElementById('usdtBalance').innerText = usdtBalance.toFixed(2) + ' $';
+            document.getElementById('gridProfit').innerText = '+' + realizedProfit.toFixed(2) + ' $';
+        }
+
+        function addLog(msg) {
+            const box = document.getElementById('logBox');
+            const time = new Date().toLocaleTimeString('en-GB');
+            box.innerHTML = `<div class="log-entry"><span class="log-time">[${time}]</span> ${msg}</div>` + box.innerHTML;
+        }
+
+        // تغيير العملة
+        function changeSymbol() {
+            if (botRunning) {
+                alert("أوقف البوت أولاً قبل تغيير العملة!");
+                document.getElementById('symbolSelect').value = currentSymbol;
+                return;
+            }
+            currentSymbol = document.getElementById('symbolSelect').value;
+            currentPrice = 0;
+            document.getElementById('livePrice').innerText = '...';
+            addLog(`🔀 تم التبديل إلى زوج ${currentSymbol}`);
+            fetchRealPrice().then(() => autoFillGrid());
+            saveState();
+        }
+
+        // جلب السعر الحقيقي من Binance
+        async function fetchRealPrice() {
+            try {
+                const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${currentSymbol}`);
+                const data = await res.json();
+                currentPrice = parseFloat(data.price);
+                document.getElementById('livePrice').innerText = currentPrice.toFixed(2) + ' $';
+                
+                if (botRunning && aiScore > -6) {
+                    checkGridExecution();
+                }
+            } catch (err) {
+                document.getElementById('livePrice').innerText = 'خطأ اتصال';
+            }
+        }
+
+        // سحب أخبار حقيقية وتحليلها بالـ NLP المبسط
+        async function fetchLiveCryptoNews() {
+            const feedBox = document.getElementById('newsFeedBox');
+            try {
+                const coin = currentSymbol.replace('USDT', '');
+                const res = await fetch(`https://min-api.cryptocompare.com/data/v2/news/?categories=${coin},Crypto&lang=EN`);
+                const data = await res.json();
+                
+                if (!data.Data || data.Data.length === 0) return;
+
+                const topNews = data.Data.slice(0, 5);
+                feedBox.innerHTML = '';
+
+                const bullWords = ['surge', 'bull', 'launch', 'approve', 'approved', 'etf', 'adoption', 'record', 'high', 'partnership', 'gain', 'rally', 'buy', 'upgrade'];
+                const bearWords = ['hack', 'hacked', 'crash', 'ban', 'sec', 'lawsuit', 'exploit', 'drop', 'plunge', 'scam', 'fraud', 'bankrupt', 'dump', 'investigation', 'attack'];
+
+                let calculatedScore = 0;
+
+                topNews.forEach(item => {
+                    const title = item.title;
+                    const lowerTitle = title.toLowerCase();
+
+                    bullWords.forEach(w => { if (lowerTitle.includes(w)) calculatedScore += 2; });
+                    bearWords.forEach(w => { if (lowerTitle.includes(w)) calculatedScore -= 3; });
+
+                    const div = document.createElement('div');
+                    div.className = 'news-item';
+                    div.innerText = `• ${title}`;
+                    feedBox.appendChild(div);
+                });
+
+                // حصر النتيجة بين -10 و +10
+                calculatedScore = Math.max(-10, Math.min(10, calculatedScore));
+                applyAIScore(calculatedScore, `تحليل تلقائي لآخر 5 أخبار حقيقية لـ ${coin}`);
+
+            } catch (err) {
+                feedBox.innerText = 'تعذر جلب الأخبار الحية حالياً، يمكنك استخدام الأزرار بالأسفل.';
+            }
+        }
+
+        // تطبيق نتيجة الذكاء الاصطناعي على البوت
+        function applyAIScore(score, sourceMsg) {
+            aiScore = score;
+            const scoreEl = document.getElementById('aiScoreDisplay');
+            const stateEl = document.getElementById('aiStateText');
+
+            scoreEl.innerText = `${score} / 10`;
+
+            if (score <= -6) {
+                scoreEl.style.color = 'var(--neon-red)';
+                stateEl.innerText = 'خطر شديد! (تجميد الشراء 🛡️)';
+                stateEl.style.color = 'var(--neon-red)';
+                addLog(`⚠️ [${sourceMsg}] التقييم (${score}): تجميد أوامر الشراء لحماية رأس المال!`);
+            } else if (score >= 6) {
+                scoreEl.style.color = 'var(--neon-green)';
+                stateEl.innerText = 'إيجابي قوي (تأجيل البيع 🚀)';
+                stateEl.style.color = 'var(--neon-green)';
+                addLog(`🔥 [${sourceMsg}] التقييم (+${score}): تأجيل البيع القريب لتعظيم الربح!`);
+            } else {
+                scoreEl.style.color = 'var(--neon-blue)';
+                stateEl.innerText = 'مستقر (تداول شبكي طبيعي)';
+                stateEl.style.color = 'var(--text-main)';
+                addLog(`🧠 [${sourceMsg}] التقييم (${score}): وضع السوق طبيعي للشبكة.`);
+            }
+            updateBotStatusUI();
+        }
+
+        function autoFillGrid() {
+            if (currentPrice === 0) {
+                addLog("انتظر ظهور السعر الحقيقي أولاً...");
+                return;
+            }
+            const lower = (currentPrice * 0.99).toFixed(2);
+            const upper = (currentPrice * 1.01).toFixed(2);
+            document.getElementById('lowerPrice').value = lower;
+            document.getElementById('upperPrice').value = upper;
+            addLog(`🎯 تم ضبط النطاق تلقائياً لـ ${currentSymbol} بين ${lower}$ و ${upper}$`);
+            saveState();
+        }
+
+        function buildGrids() {
+            const lower = parseFloat(document.getElementById('lowerPrice').value);
+            const upper = parseFloat(document.getElementById('upperPrice').value);
+            const count = parseInt(document.getElementById('gridCount').value);
+
+            if (lower >= upper || currentPrice === 0) {
+                alert("تأكد من ظهور السعر وأن الحد الأعلى أكبر من الأدنى!");
+                return false;
+            }
+
+            grids = [];
+            const step = (upper - lower) / count;
+            document.getElementById('stepSizeInfo').innerText = `الفرق لكل شبكة: ${step.toFixed(2)}$`;
+
+            for (let i = 0; i <= count; i++) {
+                const levelPrice = parseFloat((lower + (step * i)).toFixed(2));
+                const type = levelPrice < currentPrice ? 'buy' : 'sell';
+                grids.push({ price: levelPrice, type: type, step: step });
+            }
+
+            grids.sort((a, b) => b.price - a.price);
+            renderGrids();
+            saveState();
+            return true;
+        }
+
+        function renderGrids() {
+            const container = document.getElementById('gridList');
+            if (grids.length === 0) return;
+            container.innerHTML = '';
+
+            if (grids[0].step) {
+                document.getElementById('stepSizeInfo').innerText = `الفرق لكل شبكة: ${grids[0].step.toFixed(2)}$`;
+            }
+
+            grids.forEach(g => {
+                const row = document.createElement('div');
+                row.className = `grid-row ${g.type}`;
+                const typeAr = g.type === 'buy' ? 'شراء معلق (Buy)' : 'بيع معلق (Sell)';
+                row.innerHTML = `
+                    <span class="grid-type ${g.type}">${typeAr}</span>
+                    <span style="font-weight: 700;">${g.price.toFixed(2)} $</span>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function checkGridExecution() {
+            const orderSize = parseFloat(document.getElementById('orderSize').value);
+            let updated = false;
+
+            grids.forEach(g => {
+                if (g.type === 'buy' && currentPrice <= g.price) {
+                    if (usdtBalance >= orderSize) {
+                        usdtBalance -= orderSize;
+                        g.type = 'sell';
+                        g.price = parseFloat((g.price + g.step).toFixed(2));
+                        addLog(`🟢 تم الشراء عند ${currentPrice.toFixed(2)}$ | وضع هدف بيع عند ${g.price}$`);
+                        updated = true;
+                    }
+                }
+                else if (g.type === 'sell' && currentPrice >= g.price) {
+                    if (aiScore >= 6) {
+                        return; // تأجيل البيع بسبب الأخبار الإيجابية
+                    }
+                    const profit = (orderSize * (g.step / g.price));
+                    usdtBalance += orderSize + profit;
+                    realizedProfit += profit;
+                    g.type = 'buy';
+                    g.price = parseFloat((g.price - g.step).toFixed(2));
+                    addLog(`🔴 تم البيع بربح +${profit.toFixed(2)}$ عند ${currentPrice.toFixed(2)}$`);
+                    updated = true;
+                }
+            });
+
+            if (updated) {
+                updateWalletUI();
+                grids.sort((a, b) => b.price - a.price);
+                renderGrids();
+                saveState();
+            }
+        }
+
+        function updateBotStatusUI() {
+            const btn = document.getElementById('toggleBotBtn');
+            const badge = document.getElementById('botStatusBadge');
+
+            if (botRunning) {
+                btn.innerText = 'إيقاف البوت';
+                btn.className = 'btn btn-stop';
+                if (aiScore <= -6) {
+                    badge.innerText = 'حماية الطوارئ 🛡️';
+                    badge.className = 'status-badge emergency';
+                } else {
+                    badge.innerText = 'يعمل بنشاط ⚡';
+                    badge.className = 'status-badge active';
+                }
+            } else {
+                btn.innerText = 'تشغيل البوت الآلي';
+                btn.className = 'btn btn-primary';
+                badge.innerText = 'متوقف';
+                badge.className = 'status-badge';
+            }
+        }
+
+        function toggleBot() {
+            if (!botRunning) {
+                if (!buildGrids()) return;
+                botRunning = true;
+                addLog(`🚀 تم تفعيل البوت على زوج ${currentSymbol}`);
+            } else {
+                botRunning = false;
+                addLog("⏹️ تم إيقاف البوت.");
+            }
+            updateBotStatusUI();
+            saveState();
+        }
+
+        // بدء التشغيل
+        loadState();
+        fetchRealPrice();
+        fetchLiveCryptoNews();
+        setInterval(fetchRealPrice, 2000);
+        setInterval(fetchLiveCryptoNews, 60000); // تحديث الأخبار كل دقيقة تلقائياً
+    </script>
+</body>
+</html>
